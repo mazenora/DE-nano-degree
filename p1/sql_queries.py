@@ -10,9 +10,9 @@ time_table_drop = "DROP TABLE time"
 
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id int PRIMARY KEY, 
-    start_time timestamp , 
-    user_id int, 
+    songplay_id SERIAL PRIMARY KEY, 
+    start_time timestamp NOT NULL REFERENCES time(start_time), 
+    user_id int NOT NULL REFERENCES users(user_id), 
     level varchar, 
     song_id varchar, 
     artist_id varchar, 
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS songplays (
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users (
     user_id int PRIMARY KEY, 
-    first_name varchar, 
-    last_name varchar, 
+    first_name varchar NOT NULL, 
+    last_name varchar NOT NULL,  
     gender varchar, 
     level varchar
     );
@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS users (
 song_table_create = ("""
 CREATE TABLE IF NOT EXISTS songs (
     song_id varchar PRIMARY KEY, 
-    title varchar, 
-    artist_id varchar, 
+    title varchar NOT NULL, 
+    artist_id varchar NOT NULL REFERENCES artists(artist_id), 
     year int, 
     duration numeric(10,5)
     );
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS songs (
 artist_table_create = ("""
 CREATE TABLE IF NOT EXISTS artists (
     artist_id varchar PRIMARY KEY, 
-    name varchar, 
+    name varchar NOT NULL, 
     location varchar, 
     latitude numeric, 
     longitude numeric
@@ -75,7 +75,7 @@ ON CONFLICT (songplay_id) DO NOTHING;
 user_table_insert = ("""
 INSERT INTO users(user_id,first_name,last_name,gender,level)
 VALUES (%s, %s, %s, %s, %s)
-ON CONFLICT (user_id) DO NOTHING;
+ON CONFLICT (user_id) DO UPDATE SET level=EXCLUDED.level;
 """)
 
 song_table_insert = ("""
@@ -109,5 +109,5 @@ SELECT song_id, artists.artist_id
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [time_table_create, artist_table_create, user_table_create, songplay_table_create,  song_table_create,  ]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]

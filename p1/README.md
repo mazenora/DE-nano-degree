@@ -41,9 +41,9 @@ On why to use a relational database for this case:
 
 #### Fact Table
 **songplays** - records in log data associated with song plays i.e. records with page NextSong
-- songplay_id (INT) PRIMARY KEY: ID of each user song play 
-- start_time (TIMESTAMP) NOT NULL: Timestamp of beggining of user activity
-- user_id (INT) NOT NULL: ID of user
+- songplay_id SERIAL PRIMARY KEY: Auto Increment ID of each user song play 
+- start_time (TIMESTAMP) NOT NULL REFERENCES time(start_time): Timestamp of beggining of user activity
+- user_id (INT) NOT NULL REFERENCES users(user_id): ID of user
 - level (VARCHAR): User level {free | paid}
 - song_id (VARCHAR) NOT NULL: ID of Song played
 - artist_id (VARCHAR) NOT NULL: ID of Artist of the song played
@@ -62,7 +62,7 @@ On why to use a relational database for this case:
 **songs** - songs in music database
 - song_id (VARCHAR) PRIMARY KEY: ID of Song
 - title (VARCHAR) NOT NULL: Title of Song
-- artist_id (VARCHAR) NOT NULL: ID of song Artist
+- artist_id (VARCHAR) NOT NULL REFERENCES artists(artist_id): ID of song Artist
 - year (INT): Year of song release
 - duration (NUMERIC(10,5)) NOT NULL: Song duration in milliseconds
 

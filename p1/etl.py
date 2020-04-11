@@ -6,19 +6,31 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    Process the songs files and insert data into dimension tables: songs and artists.
+    :param cur: connection cursor to insert the data in DB.
+    :param filepath: path/to/the/song/file.
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
+    # insert artist record
+    artist_data = (df["artist_id"][0],df["artist_name"][0],df["artist_location"][0],df["artist_latitude"][0],df["artist_longitude"][0],)
+    cur.execute(artist_table_insert, artist_data)
+    
     # insert song record
     song_data = (df["song_id"][0],df["title"][0],df["artist_id"][0],int(df["year"][0]),df["duration"][0],)
     cur.execute(song_table_insert, song_data)
     
-    # insert artist record
-    artist_data = (df["artist_id"][0],df["artist_name"][0],df["artist_location"][0],df["artist_latitude"][0],df["artist_longitude"][0],)
-    cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
+    """
+    Process the log files and insert data into dimension tables: time and users.
+    Insert data into the facts table songplays.
+    :param cur: connection cursor to insert the data in DB.
+    :param filepath: path/to/the/log/file.
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
